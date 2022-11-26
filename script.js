@@ -3,6 +3,7 @@ const sprite = new Image();
 sprite.src='imagens/sprites.png'
 const canva= document.querySelector('canvas');
 const contexto = canva.getContext('2d');
+let janelaEl= document.querySelector('#janela');
 
 const fundo ={
     spriteX:390,
@@ -54,38 +55,122 @@ const chao={
             );
     },
 };
+function colisao(bird,chao){
+   const birdY=bird.y+bird.altura;
+   const chaoY= chao.y;
+   if(birdY>=chaoY){
+    return true;
+   }
+   return false;
+}
 
-const bird ={
-    spriteX:0,
+function criaBird(){
+    const bird ={
+        spriteX:0,
+        spriteY:0,
+        largura:33,
+        altura:24,
+        x:10,
+        y:50,
+        velocidade:0,
+        gravidade:0.25,
+        pulo:4.6,
+        pula(){
+            bird.velocidade=-bird.pulo
+            console.log(bird.velocidade);
+        },
+        atualiza(){
+            if(colisao(bird,chao)){
+                mudaTela(telas.INICIO);
+                return;
+            }
+            bird.velocidade=bird.velocidade+bird.gravidade;
+            bird.y=bird.y+bird.velocidade;
+        },
+        desenha(){
+            contexto.drawImage(
+                sprite,//imagem
+                bird.spriteX,bird.spriteY,//valor em x e y
+                bird.largura,bird.altura,// tamanho
+                bird.x,bird.y,//valor x e y no canva
+                bird.largura, bird.altura// tamanho no canva
+                );
+        }
+    }
+    return bird;
+};
+const getready ={
+    spriteX:134,
     spriteY:0,
-    largura:33,
-    altura:24,
-    x:10,
+    largura:174,
+    altura:152,
+    x:(canva.width/2)-174/2,
     y:50,
-    velocidade:0,
-    gravidade:0.25,
-    atualiza(){
-        bird.velocidade=bird.velocidade+bird.gravidade;
-        bird.y=bird.y+bird.velocidade;
-    },
     desenha(){
         contexto.drawImage(
-            sprite,//imagem
-            bird.spriteX,bird.spriteY,//valor em x e y
-            bird.largura,bird.altura,// tamanho
-            bird.x,bird.y,//valor x e y no canva
-            bird.largura, bird.altura// tamanho no canva
-            );
+            sprite,
+            getready.spriteX,getready.spriteY,
+            getready.largura,getready.altura,
+            getready.x,getready.y,
+            getready.largura,getready.altura,
+        );
+    },
 }
+const globais={};
+let telaAtiva ={};
+function mudaTela(novaTela){
+    telaAtiva=novaTela;
+    if(telaAtiva.inicializa){
+        telaAtiva.inicializa();
+    }
+   
 }
+const telas ={
+    INICIO:{
+            inicializa(){
+                globais.bird=criaBird();
+            },
+        desenha(){
+            chao.desenha();//funções que desenham o jogo
+            fundo.desenha();
+            globais.bird.desenha();
+           getready.desenha();
+            
+        },
+        click(){
+            mudaTela(telas.JOGO);
+        },
+        atualiza(){
 
+        },
+    },
+    JOGO:{
+        desenha(){
+            chao.desenha();//funções que desenham o jogo
+            fundo.desenha();
+            globais.bird.desenha();
+            
+        },
+        click(){
+            globais.bird.pula();
+        },
+        atualiza(){
+            globais.bird.atualiza();//atualiza o passaro
+        }
+    },
+}
 
 function loop(){
-   bird.atualiza();
-   chao.desenha();
-   fundo.desenha();
-   bird.desenha();
+   telaAtiva.desenha();
+   telaAtiva.atualiza();
+  
    requestAnimationFrame(loop);//função que reescreve o jogo
 }
 
+janelaEl.addEventListener('click',function(){
+    if(telaAtiva.click){
+        telaAtiva.click();
+    }
+});
+mudaTela(telas.INICIO);
 loop();
