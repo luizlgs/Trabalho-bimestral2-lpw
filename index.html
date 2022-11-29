@@ -1,17 +1,93 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flappy Bird</title>
     <link rel="stylesheet" href="estilos.css">
-</head>
-<body>
-    <header id="cabecalho">
-      <h1 id="titulo">Flappy bird</h1>
+  </head>
+  <body>
+    <header>
+      <h1>Flappy bird</h1>
     </header>
-    <canvas id="game-canvas" width="320" height="480"></canvas>
+    <main>
+      <article id="form-cadastro">
+        <h1>Ol&aacute;! Vamos jogar?</h1>
+        <form onsubmit="return criarUsuarioDoForm(this)">
+          <label>
+            <div>Escolha um login</div>
+            <div>
+              <input type="text" name="login" />
+              <div class="error"></div>
+            </div>
+          </label>
+          <label>
+            <div>Escolha uma senha</div>
+            <div>
+              <input type="password" name="senha" />
+              <div class="error"></div>
+            </div>
+          </label>
+          <label>
+            <div>Escolha um avatar</div>
+            <div>
+              <input type="file" name="avatar" />
+              <div class="error"></div>
+            </div>
+          </label>
+          <label>
+            <div></div>
+            <input type="submit" value="Criar Usuario" />
+          </label>
+        </form>
+        <div class="nota">
+          <a href="javascript:mostraFormLogin();">
+            Voc&ecirc; j&aacute; tem um login?
+          </a>
+        </div>
+      </article>
 
+      <article id="form-login">
+        <h1>Ol&aacute;! Vamos jogar?</h1>
+        <form onsubmit="return autenticarUsuarioDoForm(this);">
+          <label>
+            <div>Digite seu login</div>
+            <div>
+              <input type="text" name="login" />
+              <div class="error"></div>
+            </div>
+          </label>
+          <label>
+            <div>Digite sua senha</div>
+            <div>
+              <input type="password" name="senha" />
+              <div class="error"></div>
+            </div>
+          </label>
+          <label>
+            <div></div>
+            <input type="submit" value="Autenticar" />
+          </label>
+        </form>
+        <div class="nota">
+          <a href="javascript:mostraFormCadastro();">
+            Voc&ecirc; ainda n&atilde;o tem um login?
+          </a>
+        </div>
+      </article>
+
+      <article id="game-container">
+        <header>
+          <ul>
+            <li>
+              Ol&aacute; <span id="nome-usuario-autenticado"></span>
+            </li>
+            <li><a href="javascript:sairDoJogo();">Sair</a></li>
+          </ul>
+        </header>
+        <canvas id="game-canvas" width="320" height="480"></canvas>
+      </article>
+    </main>
     <script src="./flappy_bird.js"></script>
-</body>
+  </body>
 </html>
