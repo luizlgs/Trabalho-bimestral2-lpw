@@ -1,5 +1,3 @@
-console.log('[DevSoutinho] Flappy Bird');
-console.log('Inscreva-se no canal :D https://www.youtube.com/channel/UCzR2u5RWXWjUh7CwLSvbitA');
 
 let frames = 0;
 
@@ -81,19 +79,19 @@ function criaChao() {
   return chao;
 }
 
-function fazColisao(flappyBird, chao) {
-  const flappyBirdY = flappyBird.y + flappyBird.altura;
+function fazColisao(bird, chao) {
+  const birdY = bird.y + bird.altura;
   const chaoY = chao.y;
 
-  if(flappyBirdY >= chaoY) {
+  if(birdY >= chaoY) {
     return true;
   }
 
   return false;
 }
 
-function criaFlappyBird() {
-  const flappyBird = {
+function criabird() {
+  const bird = {
     spriteX: 0,
     spriteY: 0,
     largura: 33,
@@ -103,22 +101,22 @@ function criaFlappyBird() {
     pulo: 4.6,
     pula() {
       console.log('devo pular');
-      console.log('[antes]', flappyBird.velocidade);
-      flappyBird.velocidade =  - flappyBird.pulo;
-      console.log('[depois]', flappyBird.velocidade);
+      console.log('[antes]', bird.velocidade);
+      bird.velocidade =  - bird.pulo;
+      console.log('[depois]', bird.velocidade);
     },
     gravidade: 0.25,
     velocidade: 0,
     atualiza() {
-      if(fazColisao(flappyBird, globais.chao)) {
+      if(fazColisao(bird, globais.chao)) {
         console.log('Fez colisao');
 
         mudaParaTela(Telas.GAME_OVER);
         return;
       }
   
-      flappyBird.velocidade = flappyBird.velocidade + flappyBird.gravidade;
-      flappyBird.y = flappyBird.y + flappyBird.velocidade;
+      bird.velocidade = bird.velocidade + bird.gravidade;
+      bird.y = bird.y + bird.velocidade;
     },
     movimentos: [
       { spriteX: 0, spriteY: 0, }, // asa pra cima
@@ -134,28 +132,28 @@ function criaFlappyBird() {
 
       if(passouOIntervalo) {
         const baseDoIncremento = 1;
-        const incremento = baseDoIncremento + flappyBird.frameAtual;
-        const baseRepeticao = flappyBird.movimentos.length;
-        flappyBird.frameAtual = incremento % baseRepeticao
+        const incremento = baseDoIncremento + bird.frameAtual;
+        const baseRepeticao = bird.movimentos.length;
+        bird.frameAtual = incremento % baseRepeticao
       }
         // console.log('[incremento]', incremento);
         // console.log('[baseRepeticao]',baseRepeticao);
         // console.log('[frame]', incremento % baseRepeticao);
     },
     desenha() {
-      flappyBird.atualizaOFrameAtual();
-      const { spriteX, spriteY } = flappyBird.movimentos[flappyBird.frameAtual];
+      bird.atualizaOFrameAtual();
+      const { spriteX, spriteY } = bird.movimentos[bird.frameAtual];
 
       contexto.drawImage(
         sprites,
         spriteX, spriteY, // Sprite X, Sprite Y
-        flappyBird.largura, flappyBird.altura, // Tamanho do recorte na sprite
-        flappyBird.x, flappyBird.y,
-        flappyBird.largura, flappyBird.altura,
+        bird.largura, bird.altura, // Tamanho do recorte na sprite
+        bird.x, bird.y,
+        bird.largura, bird.altura,
       );
     }
   }
-  return flappyBird;  
+  return bird;  
 }
 
 
@@ -252,11 +250,11 @@ function criaCanos() {
         }
       })
     },
-    temColisaoComOFlappyBird(par) {
-      const cabecaDoFlappy = globais.flappyBird.y;
-      const peDoFlappy = globais.flappyBird.y + globais.flappyBird.altura;
+    temColisaoComObird(par) {
+      const cabecaDoFlappy = globais.bird.y;
+      const peDoFlappy = globais.bird.y + globais.bird.altura;
       
-      if((globais.flappyBird.x + globais.flappyBird.largura) >= par.x) {
+      if((globais.bird.x + globais.bird.largura) >= par.x) {
         if(cabecaDoFlappy <= par.canoCeu.y) {
           return true;
         }
@@ -283,7 +281,7 @@ function criaCanos() {
       canos.pares.forEach(function(par) {
         par.x = par.x - 2;
 
-        if(canos.temColisaoComOFlappyBird(par)) {
+        if(canos.temColisaoComObird(par)) {
           console.log('Você perdeu!')
           mudaParaTela(Telas.GAME_OVER);
         }
@@ -339,13 +337,13 @@ const Telas = {
   INICIO: {
     inicializa() {
       globais.rodando = true;
-      globais.flappyBird = criaFlappyBird();
+      globais.bird = criabird();
       globais.chao = criaChao();
       globais.canos = criaCanos();
     },
     desenha() {
       planoDeFundo.desenha();
-      globais.flappyBird.desenha();
+      globais.bird.desenha();
       
       globais.chao.desenha();
       mensagemGetReady.desenha();
@@ -367,16 +365,16 @@ Telas.JOGO = {
     planoDeFundo.desenha();
     globais.canos.desenha();
     globais.chao.desenha();
-    globais.flappyBird.desenha();
+    globais.bird.desenha();
     globais.placar.desenha();
   },
   click() {
-    globais.flappyBird.pula();
+    globais.bird.pula();
   },
   atualiza() {
     globais.canos.atualiza();
     globais.chao.atualiza();
-    globais.flappyBird.atualiza();
+    globais.bird.atualiza();
     globais.placar.atualiza();
   }
 };
@@ -431,6 +429,10 @@ function iniciarJogo() {
   mudaParaTela(Telas.INICIO);
   loop();
 }
+
+
+
+
 
 // gerenciamento das telas de login, cadastro e do jogo
 
@@ -588,11 +590,11 @@ function mostra(id) {
 
 // chaveUsuarioAutenticado guarda o nome da chave em que o usuario
 // autenticado atualmente fica armazenado no localStorage
-const chaveUsuarioAutenticado = 'flappybird_usuario_autenticado';
+const chaveUsuarioAutenticado = 'bird_usuario_autenticado';
 
 // chaveTodosOsUsuarios guarda o nome da chave em que um array com
 // todos os usuarios fica armazenado no localStorage
-const chaveTodosOsUsuarios = 'flappybird_todos_os_usuarios';
+const chaveTodosOsUsuarios = 'bird_todos_os_usuarios';
 
 // A funcao usuarioAutenticado retorna a estrutura de dados que
 // representa o usuario autenticado no presente momento.  Antes de
@@ -627,7 +629,7 @@ function encontrarUsuarioPeloLogin(login) {
 function todosOsUsuarios() {
   let todos = window.localStorage.getItem(chaveTodosOsUsuarios);
   if (todos !== null)
-    return JSON.parse(todos);
+    return JSON.parse(todos);//Utilização do JSON
   return {};
 }
 
