@@ -302,11 +302,12 @@ function criaCanos() {
 function criaPlacar() {
   const placar = {
     pontuacao: 0,
+    maximo: 0,
     desenha() {
       contexto.font = '35px "VT323"';
       contexto.textAlign = 'right';
       contexto.fillStyle = 'white';
-      contexto.fillText(`${placar.pontuacao}`, canvas.width - 10, 35);      
+      contexto.fillText(`${placar.pontuacao}`, canvas.width - 10, 35);
     },
     atualiza() {
       const intervaloDeFrames = 20;
@@ -337,6 +338,7 @@ function mudaParaTela(novaTela) {
 const Telas = {
   INICIO: {
     inicializa() {
+      globais.rodando = true;
       globais.flappyBird = criaFlappyBird();
       globais.chao = criaChao();
       globais.canos = criaCanos();
@@ -380,11 +382,26 @@ Telas.JOGO = {
 };
 
 Telas.GAME_OVER = {
+  inicializa() {
+    const login = usuarioAutenticado();
+    const usuario = encontrarUsuarioPeloLogin(login);
+    if (globais.placar.pontuacao > usuario.maximo) {
+      globais.placar.maximo = globais.placar.pontuacao;
+      atualizarMaximoDoUsuario(login, globais.placar.pontuacao);
+    } else {
+      globais.placar.maximo = usuario.maximo;
+    }
+  },
   desenha() {
     mensagemGameOver.desenha();
+    contexto.font = '14px "VT323"';
+    contexto.textAlign = 'right';
+    contexto.fillStyle = 'black';
+    contexto.fillText(globais.placar.pontuacao, 250, 142);
+    contexto.fillText(globais.placar.maximo, 250, 182);
   },
   atualiza() {
-    
+
   },
   click() {
     mudaParaTela(Telas.INICIO);
@@ -393,11 +410,13 @@ Telas.GAME_OVER = {
 
 function loop() {
 
-  telaAtiva.desenha();
-  telaAtiva.atualiza();
+  if (globais.rodando) {
+    telaAtiva.desenha();
+    telaAtiva.atualiza();
 
-  frames = frames + 1;
-  requestAnimationFrame(loop);
+    frames = frames + 1;
+    requestAnimationFrame(loop);
+  }
 }
 
 
@@ -407,5 +426,238 @@ canvas.addEventListener('click', function() {
   }
 });
 
-mudaParaTela(Telas.INICIO);
-loop();
+function iniciarJogo() {
+  mostraCanvas();
+  mudaParaTela(Telas.INICIO);
+  loop();
+}
+
+// gerenciamento das telas de login, cadastro e do jogo
+
+function algumUsuarioAutenticado() {
+  return usuarioAutenticado() !== null;
+}
+
+function autenticarUsuarioDoForm(form) {
+  const data = new FormData(form);
+  const login = data.get('login');
+  const senha = data.get('senha');
+
+  // como na criacao do usuario a senha nao foi salva como texto
+  // plano, o primeiro passo da autenticacao passa a ser codificar a
+  // senha recebida no formulario antes de compara-la com a senha
+  // armazenada
+  crypto.subtle
+    .digest('SHA-256', new TextEncoder().encode(senha))
+    .then(digest => {
+      const usuario = encontrarUsuarioPeloLogin(login);
+      if (usuario !== undefined && usuario.senha === buff2str(digest)) {
+        form.reset();
+        limpaErroNoForm('form-login', 'login');
+        salvarUsuarioAutenticado(login);
+        iniciarJogo();
+        return;
+      }
+      mostraErroNoForm('form-login', 'login', 'login ou senha incorretos');
+    });
+
+  return false;
+}
+
+function criarUsuarioDoForm(form) {
+  const data = new FormData(form);
+  const login = data.get('login');
+  const senha = data.get('senha');
+  const avatar = data.get('avatar');
+  if (validacaoFormCadastro(login, senha, avatar)) {
+    // nao salvar a senha do usuario em texto plano
+    crypto.subtle
+      .digest('SHA-256', new TextEncoder().encode(senha))
+      .then(digest => {
+        form.reset();
+        salvarUsuario(login, buff2str(digest), avatar);
+        salvarUsuarioAutenticado(login);
+        iniciarJogo();
+      });
+  }
+  return false;
+}
+
+function sairDoJogo() {
+  limparAutenticacao();
+  mostraFormLogin();
+}
+
+function mostraErroNoForm(form, campo, erro) {
+  const inputSelector = `article#${form} form input[name=${campo}]`;
+  const inputElement = document.querySelector(inputSelector);
+  inputElement.style.borderBottom = '1px solid red';
+  inputElement.style.backgroundColor = '#fc0';
+
+  const erroSelector = `article#${form} form label:has(> div input[name=${campo}]) .error`;
+  const erroElement = document.querySelector(erroSelector);
+  erroElement.innerHTML = erro;
+  erroElement.style.display = 'block';
+}
+
+function limpaErroNoForm(form, campo) {
+  const inputSelector = `article#${form} form input[name=${campo}]`;
+  const inputElement = document.querySelector(inputSelector);
+  inputElement.style.borderBottom = '1px solid #000';
+  inputElement.style.backgroundColor = '#fff';
+  const erroSelector = `article#${form} form label:has(> div input[name=${campo}]) .error`;
+  const erroElement = document.querySelector(erroSelector);
+  erroElement.style.display = 'none';
+}
+
+// funcoes de validacao de dados
+
+function validacaoFormCadastro(login, senha, avatar) {
+  // guarda estado final da validacao
+  let valido = true;
+  const validacaoLogin = validarLogin(login);
+  if (validacaoLogin !== null) {
+    mostraErroNoForm('form-cadastro', 'login', validacaoLogin);
+    valido = false;
+  } else {
+    limpaErroNoForm('form-cadastro', 'login')
+  }
+  const validacaoSenha = validarSenha(senha);
+  if (validacaoSenha !== null) {
+    mostraErroNoForm('form-cadastro', 'senha', validacaoSenha);
+    valido = false;
+  } else {
+    limpaErroNoForm('form-cadastro', 'senha')
+  }
+  return valido;
+}
+
+function validarLogin(login) {
+  if (login.length < 3)
+    return "login precisa ter mais de 3 caracteres";
+  if (!/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(login))
+    return "login pode conter apenas letras, numeros ou underline";
+  if (encontrarUsuarioPeloLogin(login) !== undefined)
+    return "login ja existe";
+  return null;
+}
+
+function validarSenha(senha) {
+  if (senha.length < 3)
+    return "senha precisa ter mais de 3 caracteres";
+  return null;
+}
+
+// links entre artigos na pagina
+
+function mostraFormLogin() {
+  escondeCanvas();
+  esconde('form-cadastro');
+  mostra('form-login');
+}
+
+function mostraFormCadastro() {
+  escondeCanvas();
+  esconde('form-login');
+  mostra('form-cadastro');
+}
+
+function mostraCanvas() {
+  esconde('form-login');
+  esconde('form-cadastro');
+  mostra('game-container');
+  document.getElementById('nome-usuario-autenticado').innerHTML = usuarioAutenticado();
+}
+
+function escondeCanvas() {
+  globais.rodando = false;
+  esconde('game-container');
+}
+
+// atalhos
+
+function esconde(id) {
+  document.getElementById(id).style.display = 'none';
+}
+
+function mostra(id) {
+  document.getElementById(id).style.display = 'block';
+}
+
+// gerenciamento de usuarios
+
+// chaveUsuarioAutenticado guarda o nome da chave em que o usuario
+// autenticado atualmente fica armazenado no localStorage
+const chaveUsuarioAutenticado = 'flappybird_usuario_autenticado';
+
+// chaveTodosOsUsuarios guarda o nome da chave em que um array com
+// todos os usuarios fica armazenado no localStorage
+const chaveTodosOsUsuarios = 'flappybird_todos_os_usuarios';
+
+// A funcao usuarioAutenticado retorna a estrutura de dados que
+// representa o usuario autenticado no presente momento.  Antes de
+// alguem se autenticar, esta funcao retorna `null`.
+function usuarioAutenticado() {
+  return window.localStorage.getItem(chaveUsuarioAutenticado);
+}
+
+// A funcao limparAutenticacao remove o valor associado a
+// chaveUsuarioAutenticado e, consequentemente, funciona como um "log
+// out".
+function limparAutenticacao() {
+  window.localStorage.removeItem(chaveUsuarioAutenticado);
+}
+
+// A funcao salvarUsuarioAutenticado armazena o login do usuario que
+// acabou de ser autenticado sob a chave `chaveUsuarioAutenticado`
+// dentro do `localStorage`
+function salvarUsuarioAutenticado(login) {
+  window.localStorage.setItem(chaveUsuarioAutenticado, login);
+}
+
+// A funcao encontrarUsuarioPeloLogin retorna um objeto com o usuario
+// se o login existir ou `null` se o usuario nao existir
+function encontrarUsuarioPeloLogin(login) {
+  const todos = todosOsUsuarios();
+  return todos[login];
+}
+
+// A funcao todosOsUsuarios retorna um objeto com todos os usuarios
+// presentes sob a chave `chaveTodosOsUsuarios` no `localStorage`
+function todosOsUsuarios() {
+  let todos = window.localStorage.getItem(chaveTodosOsUsuarios);
+  if (todos !== null)
+    return JSON.parse(todos);
+  return {};
+}
+
+// A funcao salvarUsuario cria uma nova entrada no objeto sobre a
+// chave `chaveTodosOsUsuarios` dentro do `localStorage`.
+function salvarUsuario(login, senha, avatar) {
+  const todos = todosOsUsuarios()
+  todos[login] = { login, senha, avatar, maximo: 0 };
+  window.localStorage.setItem(chaveTodosOsUsuarios, JSON.stringify(todos));
+}
+
+function atualizarMaximoDoUsuario(login, maximo) {
+  const todos = todosOsUsuarios()
+  const usuario = todos[login];
+  if (usuario !== undefined) {
+    usuario.maximo = maximo;
+  }
+  window.localStorage.setItem(chaveTodosOsUsuarios, JSON.stringify(todos));
+}
+
+function buff2str(buff) {
+  return [...new Uint8Array(buff)]
+    .map(x => x.toString(16))
+    .join('');
+}
+
+// Entrada no jogo
+
+if (algumUsuarioAutenticado()) {
+  iniciarJogo();
+} else {
+  mostraFormLogin();
+}
