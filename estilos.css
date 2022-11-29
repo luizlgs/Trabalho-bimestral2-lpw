@@ -1,23 +1,29 @@
 @import url('https://fonts.cdnfonts.com/css/redkost-comic');
 
-header {
+body {
+    margin: 0;
+}
+
+body > header {
     border: solid 1px rgb(82, 233, 253);
     background-color: rgb(82, 233, 253);
     user-select: none;
     height: 100px;
 }
-canvas {
-    margin-top: 18vh;
-    border: 1px solid #000;
-    display: block;
-    margin-left: 40vw;
-  }
 
-body {
-    margin: 0;
+main {
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    height: 80vh;
+    align-items: center;
 }
 
-#titulo {
+article {
+    min-width: 50%;
+}
+
+header h1 {
     margin-top: 25px;
     font-family: 'Redkost Comic', sans-serif;
     color: rgb(223, 223, 84);
@@ -26,3 +32,84 @@ body {
     -webkit-text-stroke-color: #000;
     font-size: 45px;
 }
+
+canvas#game-canvas {
+    border: 1px solid #000;
+}
+
+/* Estilos para os formularios */
+form label {
+    display: flex;
+    margin: 1em;
+}
+
+form label div {
+    width: 170px;
+}
+
+form input {
+    margin-left: 20px;
+}
+
+form input[type=text], form input[type=password] {
+    border: solid 1px #000;
+}
+
+form input[type=text]::placeholder,
+form input[type=password]::placeholder {
+    color: #000;
+}
+
+form input[type=submit] {
+    color: #fff;
+    font-weight: bold;
+    background: rgb(82, 233, 253);
+    border: 0;
+    padding: 6px 10px;
+}
+
+.error {
+    color: red;
+    margin-left: 20px;
+    margin-top: 5px;
+    font-size: 12px;
+}
+
+.nota {
+    margin-left: 16px;
+    background: #f7f7f7;
+    padding: 20px;
+}
+.nota a, .nota a:visited, .nota a:active {
+    color: rgb(82, 233, 253);
+    text-decoration: none;
+}
+.nota a:hover {
+    text-decoration: underline;
+}
+
+#game-container {
+    text-align: center;
+}
+
+#game-container header {
+    width: 100%;
+}
+
+#game-container header ul {
+    padding: 0;
+    display: flex;
+    justify-content: flex-end;
+    padding-right: 100px;
+    list-style: none;
+    margin: 0 0 40px;
+}
+
+#game-container header li {
+    margin-left: 10px;
+}
+
+/* componentes desabilitados por padrao */
+
+#form-cadastro { display: none; }
+#game-container { display: none; }
