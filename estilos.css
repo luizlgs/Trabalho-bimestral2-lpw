@@ -4,7 +4,7 @@
 body {
     margin: 0;
     overflow-y: hidden;
-    background-image: url("/sprites/back.png");
+    background-image: url("back.png");
     height: 100%;
 }
 
