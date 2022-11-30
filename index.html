@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flappy Bird</title>
     <link rel="stylesheet" href="estilos.css">
+    <link rel="shortcut icon" href="sprites/NicePng_flappy-bird-pipes-png_5857711.png" type="image/x-icon">
   </head>
   <body>
     <header>
@@ -29,19 +30,19 @@
             </div>
           </label>
           <label>
-            <div>Escolha um avatar</div>
+            <!-- <div>Escolha um avatar</div> -->
             <div>
-              <input type="file" name="avatar" />
+              <!-- <input type="file" name="avatar" /> -->
               <div class="error"></div>
             </div>
           </label>
           <label>
             <div></div>
-            <input type="submit" value="Criar Usuario" />
+            <input type="submit" value="Criar Usuario" id="input-user"/>
           </label>
         </form>
         <div class="nota">
-          <a href="javascript:mostraFormLogin();">
+          <a href="javascript:mostraFormLogin();" id="Nlogin">
             Voc&ecirc; j&aacute; tem um login?
           </a>
         </div>
@@ -66,7 +67,7 @@
           </label>
           <label>
             <div></div>
-            <input type="submit" value="Autenticar" />
+            <input type="submit" value="Autenticar" id="input-user2" />
           </label>
         </form>
         <div class="nota">
@@ -82,11 +83,14 @@
             <li>
               Ol&aacute; <span id="nome-usuario-autenticado"></span>
             </li>
-            <li><a href="javascript:sairDoJogo();">Sair</a></li>
+            <li><a href="javascript:sairDoJogo();" id="sai">Sair</a></li>
           </ul>
         </header>
-        <canvas id="game-canvas" width="320" height="480"></canvas>
+        <div id="div-canva">
+          <canvas id="game-canvas" width="320" height="480"></canvas>
+        </div>
       </article>
+      
     </main>
     <script src="./flappy_bird.js"></script>
   </body>

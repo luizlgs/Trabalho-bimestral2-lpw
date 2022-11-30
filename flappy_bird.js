@@ -8,7 +8,7 @@ const canvas = document.querySelector('canvas');
 const contexto = canvas.getContext('2d');
 
 
-// [Plano de Fundo]
+
 const planoDeFundo = {
   spriteX: 390,
   spriteY: 0,
@@ -52,9 +52,6 @@ function criaChao() {
       const repeteEm = chao.largura / 2;
       const movimentacao = chao.x - movimentoDoChao;
 
-      // console.log('[chao.x]', chao.x);
-      // console.log('[repeteEm]',repeteEm);
-      // console.log('[movimentacao]', movimentacao % repeteEm);
       
       chao.x = movimentacao % repeteEm;
     },
@@ -119,16 +116,16 @@ function criabird() {
       bird.y = bird.y + bird.velocidade;
     },
     movimentos: [
-      { spriteX: 0, spriteY: 0, }, // asa pra cima
-      { spriteX: 0, spriteY: 26, }, // asa no meio 
-      { spriteX: 0, spriteY: 52, }, // asa pra baixo
-      { spriteX: 0, spriteY: 26, }, // asa no meio 
+      { spriteX: 0, spriteY: 0, }, 
+      { spriteX: 0, spriteY: 26, }, 
+      { spriteX: 0, spriteY: 52, }, 
+      { spriteX: 0, spriteY: 26, },
     ],
     frameAtual: 0,
     atualizaOFrameAtual() {     
       const intervaloDeFrames = 10;
       const passouOIntervalo = frames % intervaloDeFrames === 0;
-      // console.log('passouOIntervalo', passouOIntervalo)
+    
 
       if(passouOIntervalo) {
         const baseDoIncremento = 1;
@@ -136,9 +133,7 @@ function criabird() {
         const baseRepeticao = bird.movimentos.length;
         bird.frameAtual = incremento % baseRepeticao
       }
-        // console.log('[incremento]', incremento);
-        // console.log('[baseRepeticao]',baseRepeticao);
-        // console.log('[frame]', incremento % baseRepeticao);
+       
     },
     desenha() {
       bird.atualizaOFrameAtual();
@@ -146,8 +141,8 @@ function criabird() {
 
       contexto.drawImage(
         sprites,
-        spriteX, spriteY, // Sprite X, Sprite Y
-        bird.largura, bird.altura, // Tamanho do recorte na sprite
+        spriteX, spriteY, 
+        bird.largura, bird.altura, 
         bird.x, bird.y,
         bird.largura, bird.altura,
       );
