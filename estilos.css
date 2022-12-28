@@ -138,12 +138,71 @@ form input[type=submit] {
 #form-cadastro { display: none; }
 #game-container { display: none; }
 
-header ul {
-    width: 100vw;
-    display: flex;
+/* Heading */
+header h1{
+ transform:translatex(0px) translatey(0px);
+ font-size:59px;
+ line-height:49.4px;
+ word-spacing:11.5px;
 }
 
-header ul li {
-    position: relative;
-    right: 9.5%;
+@media (max-width:576px){
+
+ /* Input */
+ #form-login div input[type=text]{
+  transform:translatex(0px) translatey(0px);
+  width:135px;
+ }
+ 
+ /* Form Division */
+ #form-login form{
+  transform:translatex(0px) translatey(0px);
+  width:54%;
+ }
+ 
+ /* Nota */
+ #form-login .nota{
+  transform:translatex(0px) translatey(0px);
+  width:111px;
+  z-index:-10;
+  position:relative;
+  left:17px;
+ }
+ 
+ /* Input */
+ #form-login form input{
+  position:relative;
+  left:0px;
+ }
+ 
+ /* Input */
+ #form-login div input[type=password]{
+  width:135px;
+ }
+ 
+ /* Heading */
+ #form-login h1{
+  line-height:30.6px;
+  position:relative;
+  top:-70px;
+ }
+ 
+ /* Form login */
+ #form-login{
+  position:relative;
+  top:-7px;
+  transform:translatex(0px) translatey(0px);
+  left:16px;
+ }
+ 
+ /* Heading */
+ header h1{
+  transform:translatex(0px) translatey(0px);
+ }
+ 
+ /* Header */
+ header{
+  transform:translatex(3px) translatey(-20px) !important;
+ }
+ 
 }
