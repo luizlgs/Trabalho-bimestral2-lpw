@@ -277,3 +277,38 @@ main{
  }
  
 }
+/* Sai */
+#sai{
+ position:fixed;
+ top:-95px;
+ left:400px;
+ right:-200px;
+ text-shadow:rgb(255, 255, 255) 1px 1px 0px, rgb(170, 170, 170) 2px 2px 0px;
+ font-size:26px;
+}
+
+/* Nome usuario autenticado */
+#nome-usuario-autenticado{
+ display:inline-block;
+ transform:translatex(0px) translatey(0px);
+ position:relative;
+ top:0px;
+}
+
+/* List */
+#game-container header ul{
+ padding-right:41px;
+ opacity:1;
+ text-shadow:rgb(255, 255, 255) 1px 1px 0px, rgb(170, 170, 170) 2px 2px 0px;
+ color:#000000;
+ cursor:text;
+}
+
+@media (min-width:577px){
+
+ /* List */
+ #game-container header ul{
+  display:flex;
+ }
+ 
+}
