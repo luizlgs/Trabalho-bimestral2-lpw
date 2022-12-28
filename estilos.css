@@ -206,3 +206,74 @@ header h1{
  }
  
 }
+/* Game canvas */
+#game-canvas{
+ display:inline-block;
+ transform:translatex(0px) translatey(0px);
+}
+
+/* Main */
+main{
+ transform:translatex(0px) translatey(0px);
+}
+
+@media (max-width:576px){
+
+ /* List */
+ #game-container header ul{
+  left:4px;
+  right:auto !important;
+  top:21px;
+  display:inline-block;
+  transform:translatex(-26px) translatey(12px);
+  min-height:38px;
+ }
+ 
+ /* List Item */
+ #game-container ul li{
+  position:relative;
+  top:-25px;
+  left:16px;
+ }
+ 
+ /* List Item */
+ #game-container ul li:nth-child(2){
+  position:fixed;
+  top:-48px;
+  left:318px;
+  right:-200px;
+  font-size:27px;
+  color:#6d6ded;
+  text-shadow:rgb(255, 255, 255) 1px 1px 0px, rgb(170, 170, 170) 2px 2px 0px;
+ }
+ 
+ /* Nome usuario autenticado */
+ #nome-usuario-autenticado{
+  text-shadow:rgb(255, 255, 255) 1px 1px 0px, rgb(170, 170, 170) 2px 2px 0px;
+ }
+ 
+ /* List Item */
+ #game-container ul li:nth-child(1){
+  text-shadow:rgb(255, 255, 255) 1px 1px 0px, rgb(170, 170, 170) 2px 2px 0px;
+  font-size:26px;
+  top:-17px;
+  left:53px;
+ }
+ 
+ /* Game canvas */
+ #game-canvas{
+  position:relative;
+  left:8px;
+  top:-23px;
+  height:463px;
+  transform:translatex(-26px) translatey(12px);
+ }
+ 
+ /* Heading */
+ header h1{
+  transform:translatex(-26px) translatey(12px);
+  position:relative;
+  top:12px;
+ }
+ 
+}
